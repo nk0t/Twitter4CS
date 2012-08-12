@@ -32,10 +32,13 @@ namespace t4csConsole
 				return;
 			}
 
-			var s = Console.ReadLine();
-			TwitterApi.UpdateStatus(account, s);
-
-			//まだいろいろと実装中だからpostもまともにできないす
+			while (true)
+			{
+				var s = Console.ReadLine();
+				if (s == "")
+					break;
+				TwitterApi.UpdateStatus(account, s);
+			}
 		}
 	}
 }
