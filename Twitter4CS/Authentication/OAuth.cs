@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 using System.Net;
+using Twitter4CS.Net;
 
 namespace Twitter4CS.Authentication
 {
@@ -22,10 +23,10 @@ namespace Twitter4CS.Authentication
 
 		public string GetRequestToken()
 		{
-			SortedDictionary<string, string> parameters = GenerateParameters("");
+			SortedDictionary<string, string> parameters = GenerateOAuthParameters("");
 			string signature = GenerateSignature("", "GET", RequestTokenUrl, parameters);
 			parameters.Add("oauth_signature", UrlEncode(signature));
-			string response = HttpGet(RequestTokenUrl, parameters);
+			string response = Http.HttpGet(RequestTokenUrl, parameters);
 			Dictionary<string, string> dic = ParseResponse(response);
 			return dic["oauth_token"];
 		}
@@ -39,11 +40,11 @@ namespace Twitter4CS.Authentication
 
 		public bool GetAccessToken(string token, string pin, out long userId, out string userScreenName)
 		{
-			SortedDictionary<string, string> parameters = GenerateParameters(token);
+			var parameters = GenerateOAuthParameters(token);
 			parameters.Add("oauth_verifier", pin);
 			string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
 			parameters.Add("oauth_signature", UrlEncode(signature));
-			string response = HttpGet(AccessTokenUrl, parameters);
+			string response = Http.HttpGet(AccessTokenUrl, parameters);
 			Dictionary<string, string> dic = ParseResponse(response);
 			if (dic.ContainsKey("oauth_token") && dic.ContainsKey("oauth_token_secret") &&
 				Int64.TryParse(dic["user_id"], out userId))
@@ -65,69 +66,29 @@ namespace Twitter4CS.Authentication
 
 		#region util
 
-		public string Get(string url, IDictionary<string, string> parameters)
+		public enum RequestMethod
 		{
-			SortedDictionary<string, string> parameters2 = GenerateParameters(this.Token);
+			GET, POST
+		}
+
+		public string RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "GET", url, parameters2);
 			parameters2.Add("oauth_signature", UrlEncode(signature));
-			return HttpGet(url, parameters2);
+			return Http.HttpGet(url, parameters2);
 		}
 
-		public string Post(string url, IDictionary<string, string> parameters)
+		public string RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
-			SortedDictionary<string, string> parameters2 = GenerateParameters(this.Token);
+			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "POST", url, parameters2);
 			parameters2.Add("oauth_signature", UrlEncode(signature));
-			return HttpPost(url, parameters2);
-		}
-
-		private string HttpGet(string url, IDictionary<string, string> parameters)
-		{
-			string result = "";
-			WebRequest req = WebRequest.Create(url + '?' + JoinParameters(parameters));
-			using (WebResponse res = req.GetResponse())
-			{
-				using (Stream stream = res.GetResponseStream())
-				{
-					using (StreamReader reader = new StreamReader(stream))
-					{
-						result = reader.ReadToEnd();
-					}
-				}
-			}
-			return result;
-		}
-
-		string HttpPost(string url, IDictionary<string, string> parameters)
-		{
-			byte[] data = Encoding.ASCII.GetBytes(JoinParameters(parameters));
-			WebRequest req = WebRequest.Create(url);
-			req.Method = "POST";
-			req.ContentType = "application/x-www-form-urlencoded";
-			req.ContentLength = data.Length;
-
-			string result = "";
-
-			using (var reqStream = req.GetRequestStream())
-			{
-				reqStream.Write(data, 0, data.Length);
-			}
-			using (var res = req.GetResponse())
-			{
-				using (var resStream = res.GetResponseStream())
-				{
-					using (var reader = new StreamReader(resStream, Encoding.UTF8))
-					{
-						result = reader.ReadToEnd();
-					}
-				}
-			}
-			return result;
-
+			return Http.HttpPost(url, parameters2);
 		}
 
 		private Dictionary<string, string> ParseResponse(string response)
@@ -144,24 +105,7 @@ namespace Twitter4CS.Authentication
 			return result;
 		}
 
-		private string JoinParameters(IDictionary<string, string> parameters)
-		{
-			StringBuilder result = new StringBuilder();
-			bool first = true;
-			foreach (var parameter in parameters)
-			{
-				if (first)
-					first = false;
-				else
-					result.Append('&');
-				result.Append(parameter.Key);
-				result.Append('=');
-				result.Append(parameter.Value);
-			}
-			return result.ToString();
-		}
-
-		private string GenerateSignature(string tokenSecret, string httpMethod, string url, SortedDictionary<string, string> parameters)
+		private string GenerateSignature(string tokenSecret, string httpMethod, string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			string signatureBase = GenerateSignatureBase(httpMethod, url, parameters);
 			using (HMACSHA1 hmacsha1 = new HMACSHA1())
@@ -173,18 +117,18 @@ namespace Twitter4CS.Authentication
 			}
 		}
 
-		private string GenerateSignatureBase(string httpMethod, string url, SortedDictionary<string, string> parameters)
+		private string GenerateSignatureBase(string httpMethod, string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			StringBuilder result = new StringBuilder();
 			result.Append(httpMethod);
 			result.Append('&');
 			result.Append(UrlEncode(url));
 			result.Append('&');
-			result.Append(UrlEncode(JoinParameters(parameters)));
+			result.Append(UrlEncode(Http.JoinParameters(parameters)));
 			return result.ToString();
 		}
 
-		private SortedDictionary<string, string> GenerateParameters(string token)
+		private SortedDictionary<string, string> GenerateOAuthParameters(string token)
 		{
 			SortedDictionary<string, string> result = new SortedDictionary<string, string>();
 			result.Add("oauth_consumer_key", this.ConsumerKey);
@@ -242,7 +186,7 @@ namespace Twitter4CS.Authentication
 		public string Secret { get; set; }
 
 		protected abstract string ConsumerKey { get; }
-        protected abstract string ConsumerSecret { get; }
+		protected abstract string ConsumerSecret { get; }
 
 		public const string RequestTokenUrl = "https://api.twitter.com/oauth/request_token";
 		public const string AuthorizeUrl = "https://api.twitter.com/oauth/authorize";

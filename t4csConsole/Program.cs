@@ -34,7 +34,7 @@ namespace t4csConsole
 			Dictionary<string, string> para = new Dictionary<string, string>();
 			string a = Console.ReadLine();
 			para.Add("status", OAuth.UrlEncode(a));
-			Console.WriteLine(account.Post("http://api.twitter.com/1/statuses/update.xml", para));
+			//Console.WriteLine(account.Post("http://api.twitter.com/1/statuses/update.xml", para));
 			// statusにポストするツイート指定してAPIたたくだけ
 			// あとで実装する
 
