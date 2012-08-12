@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace Twitter4CS.Net
 {
@@ -24,6 +26,20 @@ namespace Twitter4CS.Net
 				}
 			}
 			return result;
+		}
+
+		public static XDocument HttpGetXml(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			XDocument xml;
+			WebRequest req = WebRequest.Create(url + '?' + JoinParameters(parameters));
+			using (var res = req.GetResponse())
+			{
+				using (var stream = res.GetResponseStream())
+				{
+					xml = XDocument.Load(stream);
+				}
+			}
+			return xml;
 		}
 
 		public static string HttpPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
@@ -51,6 +67,30 @@ namespace Twitter4CS.Net
 				}
 			}
 			return result;
+		}
+
+		public static XDocument HttpPostXml(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			byte[] data = Encoding.ASCII.GetBytes(JoinParameters(parameters));
+			WebRequest req = WebRequest.Create(url);
+			req.Method = "POST";
+			req.ContentType = "application/x-www-form-urlencoded";
+			req.ContentLength = data.Length;
+
+			XDocument xml;
+
+			using (var stream = req.GetRequestStream())
+			{
+				stream.Write(data, 0, data.Length);
+			}
+			using (var res = req.GetResponse())
+			{
+				using (var stream = res.GetResponseStream())
+				{
+					xml = XDocument.Load(stream);
+				}
+			}
+			return xml;
 		}
 
 		public static string JoinParameters(IEnumerable<KeyValuePair<string, string>> parameters)

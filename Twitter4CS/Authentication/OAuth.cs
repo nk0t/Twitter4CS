@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Net;
 using Twitter4CS.Net;
+using System.Xml.Linq;
 
 namespace Twitter4CS.Authentication
 {
@@ -26,7 +27,7 @@ namespace Twitter4CS.Authentication
 			SortedDictionary<string, string> parameters = GenerateOAuthParameters("");
 			string signature = GenerateSignature("", "GET", RequestTokenUrl, parameters);
 			parameters.Add("oauth_signature", Http.UrlEncode(signature));
-			string response = Http.HttpGet(RequestTokenUrl, parameters);
+			string response = Http.HttpGet(RequestTokenUrl, parameters).ToString();
 			Dictionary<string, string> dic = ParseResponse(response);
 			return dic["oauth_token"];
 		}
@@ -44,7 +45,7 @@ namespace Twitter4CS.Authentication
 			parameters.Add("oauth_verifier", pin);
 			string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
 			parameters.Add("oauth_signature", Http.UrlEncode(signature));
-			string response = Http.HttpGet(AccessTokenUrl, parameters);
+			string response = Http.HttpGet(AccessTokenUrl, parameters).ToString();
 			Dictionary<string, string> dic = ParseResponse(response);
 			if (dic.ContainsKey("oauth_token") && dic.ContainsKey("oauth_token_secret") &&
 				Int64.TryParse(dic["user_id"], out userId))
@@ -71,36 +72,37 @@ namespace Twitter4CS.Authentication
 			GET, POST
 		}
 
-		public void RequestAPI(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
+		public XDocument RequestAPI(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
 		{
 			if (method == RequestMethod.GET)
 			{
-				RequestGet(uri, parameter);
+				return RequestGet(uri, parameter);
 			}
 			else if (method == RequestMethod.POST)
 			{
-				RequestPost(uri, parameter);
+				return RequestPost(uri, parameter);
 			}
+			return new XDocument();
 		}
 
-		public string RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public XDocument RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "GET", url, parameters2);
 			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
-			return Http.HttpGet(url, parameters2);
+			return Http.HttpGetXml(url, parameters2);
 		}
 
-		public string RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public XDocument RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "POST", url, parameters2);
 			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
-			return Http.HttpPost(url, parameters2);
+			return Http.HttpPostXml(url, parameters2);
 		}
 
 		private Dictionary<string, string> ParseResponse(string response)

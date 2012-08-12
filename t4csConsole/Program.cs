@@ -38,6 +38,7 @@ namespace t4csConsole
 				if (s == "")
 					break;
 				TwitterApi.UpdateStatus(account, s);
+				//account.UpdateStatus(s); こっちでもいいです
 			}
 		}
 	}
