@@ -6,6 +6,7 @@ using System.Text;
 using Twitter4CS;
 using Twitter4CS.Authentication;
 using System.Diagnostics;
+using Twitter4CS.Rest;
 
 namespace t4csConsole
 {
@@ -31,12 +32,8 @@ namespace t4csConsole
 				return;
 			}
 
-			Dictionary<string, string> para = new Dictionary<string, string>();
-			string a = Console.ReadLine();
-			para.Add("status", OAuth.UrlEncode(a));
-			//Console.WriteLine(account.Post("http://api.twitter.com/1/statuses/update.xml", para));
-			// statusにポストするツイート指定してAPIたたくだけ
-			// あとで実装する
+			var s = Console.ReadLine();
+			TwitterApi.UpdateStatus(account, s);
 
 			//まだいろいろと実装中だからpostもまともにできないす
 		}

@@ -69,5 +69,35 @@ namespace Twitter4CS.Net
 			}
 			return result.ToString();
 		}
+
+		public static string UrlEncode(string value, Encoding encoding, bool isUpper = true)
+		{
+			if (value == null)
+				value = "";
+			StringBuilder result = new StringBuilder();
+			byte[] data = encoding.GetBytes(value);
+			foreach (byte b in data)
+			{
+				if (b < 0x80 && AllowedChars.IndexOf((char)b) != -1)
+				{
+					result.Append((char)b);
+				}
+				else
+				{
+					if (isUpper)
+						result.Append('%' + String.Format("{0:X2}", (int)b));
+					else
+						result.Append('%' + String.Format("{0:x2}", (int)b));
+				}
+			}
+			return result.ToString();
+		}
+
+		public static string UrlEncode(string value)
+		{
+			return UrlEncode(value, Encoding.UTF8);
+		}
+
+		public const string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 	}
 }
