@@ -41,11 +41,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\OAuth.cs" />
+    <Compile Include="HashTagEntity.cs" />
     <Compile Include="Net\Http.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rest\TwitterApi.cs" />
     <Compile Include="Status.cs" />
+    <Compile Include="UrlEntity.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="UserMentionEntity.cs" />
     <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
