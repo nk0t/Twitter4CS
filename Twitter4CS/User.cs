@@ -18,19 +18,19 @@ namespace Twitter4CS
 			if (node == null)
 				throw new ArgumentNullException();
 			var user = new User();
-            user.Id = (long)node.Element("id");
-            user.UserName = (string)node.Element("name");
-            user.ScreenName = (string)node.Element("screen_name");
-            user.Bio = (string)node.Element("description");
-            user.Followers = (long)node.Element("followers_count");
-            user.Followings = (long)node.Element("friends_count");
-            user.Favorites = (long)node.Element("favourites_count");
-            user.Listed = (long)node.Element("listed_count");
-            user.Tweets = (long)node.Element("statuses_count");
-            user.ProfileImage = (string)node.Element("profile_image_url");
-            user.IsProtected = bool.Parse((string)node.Element("protected"));
-            user.CreatedAt = ((string)node.Element("created_at")).ToDateTime(); //Util.Extensions
-            user.Location = (string)node.Element("location");
+            user.Id = ((string)node.Element("id").Value).ToLong();
+            user.UserName = (string)node.Element("name").Value;
+            user.ScreenName = (string)node.Element("screen_name").Value;
+            user.Bio = (string)node.Element("description").Value;
+            user.Followers = ((string)node.Element("followers_count").Value).ToLong();
+            user.Followings = ((string)node.Element("friends_count").Value).ToLong();
+            user.Favorites = ((string)node.Element("favourites_count").Value).ToLong();
+            user.Listed = ((string)node.Element("listed_count").Value).ToLong();
+            user.Tweets = ((string)node.Element("statuses_count").Value).ToLong();
+            user.ProfileImage = (string)node.Element("profile_image_url").Value;
+            user.IsProtected = ((string)node.Element("protected").Value).ToBool();
+            user.CreatedAt = ((string)node.Element("created_at").Value).ToDateTime(); //Util.Extensions
+            user.Location = (string)node.Element("location").Value;
 			return user;
 		}
 
@@ -59,6 +59,11 @@ namespace Twitter4CS
         public override string ToString()
         {
             return ScreenName;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 	}
 }

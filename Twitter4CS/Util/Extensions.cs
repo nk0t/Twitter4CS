@@ -36,5 +36,11 @@ namespace Twitter4CS.Util
                 System.Globalization.DateTimeFormatInfo.InvariantInfo,
                 System.Globalization.DateTimeStyles.None);
         }
+
+        public static int ToInteger(this string s)
+        {
+            int i;
+            return int.TryParse(s, out i) ? i : 0;
+        }
 	}
 }
