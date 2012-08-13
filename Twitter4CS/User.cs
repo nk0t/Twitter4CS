@@ -9,6 +9,10 @@ namespace Twitter4CS
 {
 	public class User
 	{
+        private User()
+        { 
+        }
+
 		public static User Create(XElement node)
 		{
 			if (node == null)
@@ -42,6 +46,19 @@ namespace Twitter4CS
 		public string ProfileImage { get; private set; }
 		public bool IsProtected { get; private set; }
 		public DateTime CreatedAt { get; private set; }
-		public string Location { get; private set; }        
+		public string Location { get; private set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is User)
+                return Id == ((User)obj).Id;
+            else
+                return false;
+        }
+
+        public override string ToString()
+        {
+            return ScreenName;
+        }
 	}
 }

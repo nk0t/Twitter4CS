@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Net;
 using Twitter4CS.Net;
+using System.Xml.Linq;
 
 namespace Twitter4CS.Authentication
 {
@@ -25,8 +26,8 @@ namespace Twitter4CS.Authentication
 		{
 			SortedDictionary<string, string> parameters = GenerateOAuthParameters("");
 			string signature = GenerateSignature("", "GET", RequestTokenUrl, parameters);
-			parameters.Add("oauth_signature", UrlEncode(signature));
-			string response = Http.HttpGet(RequestTokenUrl, parameters);
+			parameters.Add("oauth_signature", Http.UrlEncode(signature));
+			string response = Http.HttpGet(RequestTokenUrl, parameters).ToString();
 			Dictionary<string, string> dic = ParseResponse(response);
 			return dic["oauth_token"];
 		}
@@ -43,8 +44,8 @@ namespace Twitter4CS.Authentication
 			var parameters = GenerateOAuthParameters(token);
 			parameters.Add("oauth_verifier", pin);
 			string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
-			parameters.Add("oauth_signature", UrlEncode(signature));
-			string response = Http.HttpGet(AccessTokenUrl, parameters);
+			parameters.Add("oauth_signature", Http.UrlEncode(signature));
+			string response = Http.HttpGet(AccessTokenUrl, parameters).ToString();
 			Dictionary<string, string> dic = ParseResponse(response);
 			if (dic.ContainsKey("oauth_token") && dic.ContainsKey("oauth_token_secret") &&
 				Int64.TryParse(dic["user_id"], out userId))
@@ -71,24 +72,37 @@ namespace Twitter4CS.Authentication
 			GET, POST
 		}
 
-		public string RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public XDocument RequestAPI(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
+		{
+			if (method == RequestMethod.GET)
+			{
+				return RequestGet(uri, parameter);
+			}
+			else if (method == RequestMethod.POST)
+			{
+				return RequestPost(uri, parameter);
+			}
+			return new XDocument();
+		}
+
+		public XDocument RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "GET", url, parameters2);
-			parameters2.Add("oauth_signature", UrlEncode(signature));
-			return Http.HttpGet(url, parameters2);
+			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
+			return Http.HttpGetXml(url, parameters2);
 		}
 
-		public string RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public XDocument RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
 				parameters2.Add(p.Key, p.Value);
 			string signature = GenerateSignature(this.Secret, "POST", url, parameters2);
-			parameters2.Add("oauth_signature", UrlEncode(signature));
-			return Http.HttpPost(url, parameters2);
+			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
+			return Http.HttpPostXml(url, parameters2);
 		}
 
 		private Dictionary<string, string> ParseResponse(string response)
@@ -110,7 +124,7 @@ namespace Twitter4CS.Authentication
 			string signatureBase = GenerateSignatureBase(httpMethod, url, parameters);
 			using (HMACSHA1 hmacsha1 = new HMACSHA1())
 			{
-				hmacsha1.Key = Encoding.ASCII.GetBytes(UrlEncode(ConsumerSecret) + '&' + UrlEncode(tokenSecret));
+				hmacsha1.Key = Encoding.ASCII.GetBytes(Http.UrlEncode(ConsumerSecret) + '&' + Http.UrlEncode(tokenSecret));
 				byte[] data = System.Text.Encoding.ASCII.GetBytes(signatureBase);
 				byte[] hash = hmacsha1.ComputeHash(data);
 				return Convert.ToBase64String(hash);
@@ -122,9 +136,9 @@ namespace Twitter4CS.Authentication
 			StringBuilder result = new StringBuilder();
 			result.Append(httpMethod);
 			result.Append('&');
-			result.Append(UrlEncode(url));
+			result.Append(Http.UrlEncode(url));
 			result.Append('&');
-			result.Append(UrlEncode(Http.JoinParameters(parameters)));
+			result.Append(Http.UrlEncode(Http.JoinParameters(parameters)));
 			return result.ToString();
 		}
 
@@ -139,34 +153,6 @@ namespace Twitter4CS.Authentication
 			if (!string.IsNullOrEmpty(token))
 				result.Add("oauth_token", token);
 			return result;
-		}
-
-		public static string UrlEncode(string value, Encoding encoding, bool isUpper = true)
-		{
-			if (value == null)
-				value = "";
-			StringBuilder result = new StringBuilder();
-			byte[] data = encoding.GetBytes(value);
-			foreach (byte b in data)
-			{
-				if (b < 0x80 && AllowedChars.IndexOf((char)b) != -1)
-				{
-					result.Append((char)b);
-				}
-				else
-				{
-					if (isUpper)
-						result.Append('%' + String.Format("{0:X2}", (int)b));
-					else
-						result.Append('%' + String.Format("{0:x2}", (int)b));
-				}
-			}
-			return result.ToString();
-		}
-
-		public static string UrlEncode(string value)
-		{
-			return UrlEncode(value, Encoding.UTF8);
 		}
 
 		private string GenerateNonce()
@@ -192,6 +178,5 @@ namespace Twitter4CS.Authentication
 		public const string AuthorizeUrl = "https://api.twitter.com/oauth/authorize";
 		public const string AccessTokenUrl = "https://api.twitter.com/oauth/access_token";
 
-		public const string AllowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 	}
 }
