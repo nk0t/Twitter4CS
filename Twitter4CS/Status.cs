@@ -19,13 +19,13 @@ namespace Twitter4CS
 				throw new ArgumentNullException();
 			var status = new Status();
             status.Id = node.Element("id").Value.ToLong();
-            status.Text = node.Element("text").Value;
+            status.Text = node.Element("text").ParseString();
             status.User = User.Create(node.Element("user"));
             status.CreatedAt = node.Element("created_at").Value.ToDateTime();
-            status.Source = node.Element("source").Value;
+            status.Source = node.Element("source").ParseString();
             status.InReplyToStatusId = node.Element("in_reply_to_status_id").Value.ToLong();
             status.InReplyToUserId = node.Element("in_reply_to_user_id").Value.ToLong();
-            status.InReplyToUserScreenName = node.Element("in_reply_to_screen_name").Value;
+            status.InReplyToUserScreenName = node.Element("in_reply_to_screen_name").ParseString();
             status.RetweetedOriginal = Status.Create(node.Element("retweeted_status"));
             status.RetweetedCount = node.Element("retweeted_count").Value.ToLong();
             var urls = node.Element("entities").Element("urls");
