@@ -28,5 +28,19 @@ namespace Twitter4CS.Util
 		{
 			return e != null ? e.Value.Replace("&lt;", "<").Replace("&gt;", ">") : null;
 		}
+
+		public static DateTime ToDateTime(this string s)
+		{
+			return DateTime.ParseExact(s,
+				"ddd MMM d HH':'mm':'ss zzz yyyy",
+				System.Globalization.DateTimeFormatInfo.InvariantInfo,
+				System.Globalization.DateTimeStyles.None);
+		}
+
+		public static int ToInteger(this string s)
+		{
+			int i;
+			return int.TryParse(s, out i) ? i : 0;
+		}
 	}
 }
