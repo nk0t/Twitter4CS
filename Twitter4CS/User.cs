@@ -19,9 +19,9 @@ namespace Twitter4CS
 				throw new ArgumentNullException();
 			var user = new User();
 			user.Id = node.Element("id").Value.ToLong();
-			user.UserName = node.Element("name").Value;
+			user.UserName = node.Element("name").ParseString();
 			user.ScreenName = node.Element("screen_name").Value;
-			user.Bio = node.Element("description").Value;
+			user.Bio = node.Element("description").ParseString();
 			user.Followers = node.Element("followers_count").Value.ToLong();
 			user.Followings = node.Element("friends_count").Value.ToLong();
 			user.Favorites = node.Element("favourites_count").Value.ToLong();
@@ -29,7 +29,7 @@ namespace Twitter4CS
 			user.Tweets = node.Element("statuses_count").Value.ToLong();
 			user.ProfileImage = node.Element("profile_image_url").Value;
 			user.IsProtected = node.Element("protected").Value.ToBool();
-			user.CreatedAt = node.Element("created_at").Value.ToDateTime(); //Util.Extensions
+			user.CreatedAt = node.Element("created_at").Value.ToDateTime();
 			user.Location = node.Element("location").Value;
 			return user;
 		}
