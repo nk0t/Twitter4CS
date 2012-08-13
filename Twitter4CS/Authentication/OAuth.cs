@@ -41,21 +41,30 @@ namespace Twitter4CS.Authentication
 
 		public bool GetAccessToken(string token, string pin, out long userId, out string userScreenName)
 		{
-			var parameters = GenerateOAuthParameters(token);
-			parameters.Add("oauth_verifier", pin);
-			string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
-			parameters.Add("oauth_signature", Http.UrlEncode(signature));
-			string response = Http.HttpGet(AccessTokenUrl, parameters).ToString();
-			Dictionary<string, string> dic = ParseResponse(response);
-			if (dic.ContainsKey("oauth_token") && dic.ContainsKey("oauth_token_secret") &&
-				Int64.TryParse(dic["user_id"], out userId))
+			try
 			{
-				this.Token = dic["oauth_token"];
-				this.Secret = dic["oauth_token_secret"];
-				userScreenName = dic["screen_name"];
-				return true;
+				var parameters = GenerateOAuthParameters(token);
+				parameters.Add("oauth_verifier", pin);
+				string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
+				parameters.Add("oauth_signature", Http.UrlEncode(signature));
+				string response = Http.HttpGet(AccessTokenUrl, parameters).ToString();
+				Dictionary<string, string> dic = ParseResponse(response);
+				if (dic.ContainsKey("oauth_token") && dic.ContainsKey("oauth_token_secret") &&
+					Int64.TryParse(dic["user_id"], out userId))
+				{
+					this.Token = dic["oauth_token"];
+					this.Secret = dic["oauth_token_secret"];
+					userScreenName = dic["screen_name"];
+					return true;
+				}
+				else
+				{
+					userId = 0;
+					userScreenName = string.Empty;
+					return false;
+				}
 			}
-			else
+			catch
 			{
 				userId = 0;
 				userScreenName = string.Empty;

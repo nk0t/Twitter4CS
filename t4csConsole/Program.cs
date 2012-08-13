@@ -25,7 +25,6 @@ namespace t4csConsole
 			if (account.GetAccessToken(token, pin, out userId, out screenName))
 			{
 				Console.WriteLine("認証成功");
-				TwitterApi.GetStatus(account, 234837736115281920);
 			}
 			else
 			{

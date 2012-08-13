@@ -67,5 +67,14 @@ namespace Twitter4CS.Rest
 		}
 
 		#endregion
+
+		public static Status Retweet(this OAuth oauth, long statusId)
+		{
+			var param = new List<KeyValuePair<string, string>>();
+			param.Add(new KeyValuePair<string, string>("include_entities", "true"));
+			var url = TwitterApiUrl + string.Format("statuses/retweet/{0}.xml", statusId);
+			XDocument xdoc = oauth.RequestAPI(url, OAuth.RequestMethod.POST, param);
+			return Status.Create(xdoc.Root);
+		}
 	}
 }
