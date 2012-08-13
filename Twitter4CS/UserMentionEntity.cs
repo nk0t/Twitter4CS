@@ -7,7 +7,7 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
-	public class UserMentionEntity
+	public class UserMentionEntity : Entity
 	{
 		private UserMentionEntity()
 		{

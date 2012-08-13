@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\OAuth.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="HashTagEntity.cs" />
     <Compile Include="Net\Http.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

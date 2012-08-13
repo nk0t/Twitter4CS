@@ -7,7 +7,7 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
-	public class UrlEntity
+	public class UrlEntity : Entity
 	{
 		private UrlEntity()
 		{

@@ -7,7 +7,7 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
-	public class HashTagEntity
+	public class HashTagEntity : Entity
 	{
 		private HashTagEntity()
 		{

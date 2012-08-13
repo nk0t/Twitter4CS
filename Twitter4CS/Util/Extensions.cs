@@ -13,6 +13,11 @@ namespace Twitter4CS.Util
 			return s.ToLower() == "true";
 		}
 
+		public static bool ToBool(this XElement e)
+		{
+			return ToBool(e.Value);
+		}
+
 		public static long ToLong(this string s)
 		{
 			long l;
@@ -29,18 +34,28 @@ namespace Twitter4CS.Util
 			return e != null ? e.Value.Replace("&lt;", "<").Replace("&gt;", ">") : null;
 		}
 
-		public static DateTime ToDateTime(this string s)
+		public static DateTime ToDateTime(this string s, string format = "ddd MMM d HH':'mm':'ss zzz yyyy")
 		{
 			return DateTime.ParseExact(s,
-				"ddd MMM d HH':'mm':'ss zzz yyyy",
+				format,
 				System.Globalization.DateTimeFormatInfo.InvariantInfo,
 				System.Globalization.DateTimeStyles.None);
+		}
+
+		public static DateTime ToDateTime(this XElement e, string format = "ddd MMM d HH':'mm':'ss zzz yyyy")
+		{
+			return ToDateTime(e.Value, format);
 		}
 
 		public static int ToInteger(this string s)
 		{
 			int i;
 			return int.TryParse(s, out i) ? i : 0;
+		}
+
+		public static int ToInteger(this XElement e)
+		{
+			return ToInteger(e.Value);
 		}
 	}
 }

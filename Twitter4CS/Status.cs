@@ -18,6 +18,15 @@ namespace Twitter4CS
 			if (node == null)
 				throw new ArgumentNullException();
 			var status = new Status();
+			status.Id = node.Element("id").ToLong();
+            status.User = User.Create(node.Element("user"));
+			status.Text = node.Element("text").ParseString();
+			status.Source = node.Element("source").ParseString();
+			status.CreatedAt = node.Element("created_at").Value.ToDateTime();
+            status.InReplyToStatusId = node.Element("in_reply_to_status_id").ToLong();
+            status.InReplyToUserId = node.Element("in_reply_to_user_id").ToLong();
+            status.InReplyToUserScreenName = node.Element("in_reply_to_screen_name").ParseString();
+            status.Entities = Entity.Create(node.Element("entities"));
 			return status;
 		}
 
@@ -26,9 +35,7 @@ namespace Twitter4CS
 		public string Text { get; private set; }
 		public User User { get; private set; }
 		public DateTime CreatedAt { get; private set; }
-		public UrlEntity[] UrlEntities { get; private set; }
-		public UserMentionEntity[] UserMentionsEntities { get; private set; }
-		public HashTagEntity[] hashTagEntities { get; private set; }
+		public Entity[] Entities { get; private set; }
 		public string Source { get; private set; }
 		public long InReplyToStatusId { get; private set; }
 		public long InReplyToUserId { get; private set; }
