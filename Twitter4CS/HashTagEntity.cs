@@ -7,20 +7,20 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
-	public class HashTagEntity
+	public class HashtagEntity
 	{
-		private HashTagEntity()
+		private HashtagEntity()
 		{
 		}
 
-		public static HashTagEntity Create(XElement node)
+		public static HashtagEntity Create(XElement node)
 		{
 			if (node == null)
 				throw new ArgumentNullException();
-			var entity = new HashTagEntity();
-			entity.Text = (string)node.Element("text").Value;
-			entity.StartIndex = ((string)node.Attribute("start").Value).ToInteger();
-			entity.EndIndex = ((string)node.Attribute("end").Value).ToInteger();
+			var entity = new HashtagEntity();
+			entity.Text = node.Element("text").Value;
+			entity.StartIndex = node.Attribute("start").Value.ToInteger();
+			entity.EndIndex = node.Attribute("end").Value.ToInteger();
 			return entity;
 		}
 
