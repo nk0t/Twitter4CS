@@ -18,19 +18,19 @@ namespace Twitter4CS
 			if (node == null)
 				throw new ArgumentNullException();
 			var user = new User();
-			user.Id = ((string)node.Element("id").Value).ToLong();
-			user.UserName = (string)node.Element("name").Value;
-			user.ScreenName = (string)node.Element("screen_name").Value;
-			user.Bio = (string)node.Element("description").Value;
-			user.Followers = ((string)node.Element("followers_count").Value).ToLong();
-			user.Followings = ((string)node.Element("friends_count").Value).ToLong();
-			user.Favorites = ((string)node.Element("favourites_count").Value).ToLong();
-			user.Listed = ((string)node.Element("listed_count").Value).ToLong();
-			user.Tweets = ((string)node.Element("statuses_count").Value).ToLong();
-			user.ProfileImage = (string)node.Element("profile_image_url").Value;
-			user.IsProtected = ((string)node.Element("protected").Value).ToBool();
-			user.CreatedAt = ((string)node.Element("created_at").Value).ToDateTime(); //Util.Extensions
-			user.Location = (string)node.Element("location").Value;
+			user.Id = node.Element("id").Value.ToLong();
+			user.UserName = node.Element("name").ParseString();
+			user.ScreenName = node.Element("screen_name").Value;
+			user.Bio = node.Element("description").ParseString();
+			user.Followers = node.Element("followers_count").Value.ToLong();
+			user.Followings = node.Element("friends_count").Value.ToLong();
+			user.Favorites = node.Element("favourites_count").Value.ToLong();
+			user.Listed = node.Element("listed_count").Value.ToLong();
+			user.Tweets = node.Element("statuses_count").Value.ToLong();
+			user.ProfileImage = node.Element("profile_image_url").Value;
+			user.IsProtected = node.Element("protected").Value.ToBool();
+			user.CreatedAt = node.Element("created_at").Value.ToDateTime();
+			user.Location = node.Element("location").Value;
 			return user;
 		}
 
