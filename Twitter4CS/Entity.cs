@@ -6,12 +6,9 @@ using System.Xml.Linq;
 
 namespace Twitter4CS
 {
-	public class Entity
+	public abstract class Entity
 	{
-		public static Entity[] Create(XElement node)
-		{
-			//throw new NotImplementedException();
-			return null;
-		}
+        public int StartIndex { get; protected set; }
+        public int EndIndex { get; protected set; }
 	}
 }
