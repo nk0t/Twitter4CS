@@ -18,6 +18,16 @@ namespace Twitter4CS
             if (node == null)
                 throw new ArgumentNullException();
             var relation = new Relationship();
+            var sourceNode = node.Element("source");
+            var targetNode = node.Element("target");
+            relation.SourceId = sourceNode.Element("id").Value.ToLong();
+            relation.SourceScreenName = sourceNode.Element("screen_name").Value;
+            relation.TargetId = targetNode.Element("id").Value.ToLong();
+            relation.TargetScreenName = targetNode.Element("screen_name").Value;
+            relation.IsSourceFollowingTarget = sourceNode.Element("following").Value.ToBool();
+            relation.IsSourceFollowedByTarget = sourceNode.Element("followed_by").Value.ToBool();
+            relation.IsSourceBlockingTarget = sourceNode.Element("blocking").Value == null;
+            relation.IsSourceNotificationEnabled = sourceNode.Element("notifications_enabled").Value == null;
             return relation;
         }
 
