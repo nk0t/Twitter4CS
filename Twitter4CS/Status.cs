@@ -26,8 +26,8 @@ namespace Twitter4CS
             status.InReplyToStatusId = node.Element("in_reply_to_status_id").Value.ToLong();
             status.InReplyToUserId = node.Element("in_reply_to_user_id").Value.ToLong();
             status.InReplyToUserScreenName = node.Element("in_reply_to_screen_name").ParseString();
-            status.RetweetedOriginal = Status.Create(node.Element("retweeted_status"));
-            status.RetweetedCount = node.Element("retweeted_count").Value.ToLong();
+			status.RetweetedOriginal = node.Element("retweeted_status") == null ? null : Status.Create(node.Element("retweeted_status"));
+			status.RetweetedCount = node.Element("retweeted_count") == null ? 0 : node.Element("retweeted_count").Value.ToLong();
             var urls = node.Element("entities").Element("urls");
             IEnumerable<XElement> urlElements = from el in urls.Elements("url") select el;
             foreach (XElement el in urlElements)
