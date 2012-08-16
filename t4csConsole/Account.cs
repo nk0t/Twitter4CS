@@ -10,6 +10,10 @@ namespace t4csConsole
 {
 	public class Account : OAuth
 	{
+		public Account() : base() { }
+
+		public Account(string token, string secret) : base(token, secret) { }
+
 		protected override string ConsumerKey
 		{
 			get
