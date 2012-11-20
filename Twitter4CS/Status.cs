@@ -49,6 +49,17 @@ namespace Twitter4CS
 			return status;
 		}
 
+		//実装サンプル
+		public static Status Create(dynamic root)
+		{
+			if (root == null)
+				throw new ArgumentNullException();
+			var status = new Status();
+			status.Id = (long)root.id;
+			status.Text = root.text;
+			return status;
+		}
+
 		public long Id { get; private set; }
 		public string Text { get; private set; }
 		public User User { get; private set; }
