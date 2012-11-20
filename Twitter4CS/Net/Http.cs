@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml;
+using Twitter4CS.Util;
 
 namespace Twitter4CS.Net
 {
@@ -40,6 +41,18 @@ namespace Twitter4CS.Net
 				}
 			}
 			return xml;
+		}
+
+		public static XDocument HttpGetJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			WebRequest req = WebRequest.Create(url + '?' + JoinParameters(parameters));
+			using (var res = req.GetResponse())
+			{
+				using (var stream = res.GetResponseStream())
+				{
+					return DynamicJson.Parse(stream);
+				}
+			}
 		}
 
 		public static string HttpPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
@@ -91,6 +104,27 @@ namespace Twitter4CS.Net
 				}
 			}
 			return xml;
+		}
+
+		public static dynamic HttpPostJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		{
+			byte[] data = Encoding.ASCII.GetBytes(JoinParameters(parameters));
+			WebRequest req = WebRequest.Create(url);
+			req.Method = "POST";
+			req.ContentType = "application/x-www-form-urlencoded";
+			req.ContentLength = data.Length;
+
+			using (var stream = req.GetRequestStream())
+			{
+				stream.Write(data, 0, data.Length);
+			}
+			using (var res = req.GetResponse())
+			{
+				using (var stream = res.GetResponseStream())
+				{
+					return DynamicJson.Parse(stream);
+				}
+			}
 		}
 
 		public static string JoinParameters(IEnumerable<KeyValuePair<string, string>> parameters)

@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,15 +42,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\OAuth.cs" />
+    <Compile Include="DirectMessage.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="HashTagEntity.cs" />
+    <Compile Include="IDs.cs" />
     <Compile Include="Net\Http.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relationship.cs" />
     <Compile Include="Rest\TwitterApi.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="UrlEntity.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserMentionEntity.cs" />
+    <Compile Include="Util\DynamicJson.cs" />
     <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
