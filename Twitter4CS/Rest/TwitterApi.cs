@@ -12,6 +12,7 @@ namespace Twitter4CS.Rest
 	public static class TwitterApi
 	{
 		public static string TwitterApiUrl = "https://api.twitter.com/1/";
+		public static string TwitterAPiUrlNew = "https://api.twitter.com/1.1/";
 
 		#region Status
 
@@ -55,6 +56,24 @@ namespace Twitter4CS.Rest
 			var url = TwitterApiUrl + "statuses/update.xml";
 			XDocument xdoc = oauth.RequestAPI(url, OAuth.RequestMethod.POST, param);
 			return Status.Create(xdoc.Root);
+		}
+
+		/// <summary>
+		/// Statusを投稿(API1.1)
+		/// </summary>
+		public static Status UpdateStatusNew(this OAuth oauth, string text, long? inReplyTo = null)
+		{
+			var param = new List<KeyValuePair<string, string>>();
+			param.Add(new KeyValuePair<string, string>("status", Http.UrlEncode(text)));
+			if (inReplyTo != null && inReplyTo.HasValue)
+			{
+				param.Add(new KeyValuePair<string, string>("in_reply_to_status_id", inReplyTo.Value.ToString()));
+			}
+			param.Add(new KeyValuePair<string, string>("include_entities", "true"));
+
+			var url = TwitterAPiUrlNew + "statuses/update.json";
+			dynamic json = oauth.RequestAPIJson(url, OAuth.RequestMethod.POST, param);
+			return Status.Create(json);
 		}
 
 		#endregion

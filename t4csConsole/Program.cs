@@ -56,8 +56,9 @@ namespace t4csConsole
 				var s = Console.ReadLine();
 				if (s == "")
 					break;
-				TwitterApi.UpdateStatus(account, s);
+				var st = TwitterApi.UpdateStatusNew(account, s);
 				//account.UpdateStatus(s); こっちでもいいです
+				Console.WriteLine(string.Format("[{0}]{1}",st.Id, st.Text));
 			}
 		}
 	}
