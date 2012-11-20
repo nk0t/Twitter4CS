@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +54,7 @@
     <Compile Include="UrlEntity.cs" />
     <Compile Include="User.cs" />
     <Compile Include="UserMentionEntity.cs" />
+    <Compile Include="Util\DynamicJson.cs" />
     <Compile Include="Util\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
