@@ -34,6 +34,17 @@ namespace Twitter4CS
 			return user;
 		}
 
+		public static User Create(dynamic root)
+		{
+			if (root == null)
+				throw new ArgumentNullException();
+			var user = new User();
+			user.Id = (long)root.id;
+			user.UserName = root.name;
+			user.ScreenName = root.screen_name;
+			return user;
+		}
+
 		public string UserName { get; private set; }
 		public string ScreenName { get; private set; }
 		public long Id { get; private set; }
