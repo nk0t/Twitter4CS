@@ -43,16 +43,18 @@ namespace Twitter4CS.Net
 			return xml;
 		}
 
-		public static XDocument HttpGetJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public static dynamic HttpGetJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
+			dynamic json;
 			WebRequest req = WebRequest.Create(url + '?' + JoinParameters(parameters));
 			using (var res = req.GetResponse())
 			{
 				using (var stream = res.GetResponseStream())
 				{
-					return DynamicJson.Parse(stream);
+					json = DynamicJson.Parse(stream);
 				}
 			}
+			return json;
 		}
 
 		public static string HttpPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)

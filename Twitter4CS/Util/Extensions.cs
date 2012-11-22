@@ -34,6 +34,11 @@ namespace Twitter4CS.Util
 			return e != null ? e.Value.Replace("&lt;", "<").Replace("&gt;", ">") : null;
 		}
 
+		public static string ParseString(this string s)
+		{
+			return s != null ? s.Replace("&lt;", "<").Replace("&gt;", ">") : null;
+		}
+
 		public static DateTime ToDateTime(this string s, string format = "ddd MMM d HH':'mm':'ss zzz yyyy")
 		{
 			return DateTime.ParseExact(s,
