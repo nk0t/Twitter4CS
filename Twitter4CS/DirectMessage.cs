@@ -30,6 +30,23 @@ namespace Twitter4CS
 			return message;
 		}
 
+		public static DirectMessage Create(dynamic root)
+		{
+			if (root == null)
+				throw new ArgumentNullException();
+			var message = new DirectMessage();
+			message.Id = (long)root.id;
+			message.Text = ((string)root.text).ParseString();
+			message.Sender = User.Create(root.sender);
+			message.SenderId = (long)root.sender_id;
+			message.SenderScreenName = root.sender_screen_name;
+			message.Recipient = User.Create(root.recipient);
+			message.RecipientId = (long)root.recipient_id;
+			message.RecipientScreenName = root.recipient_screen_name;
+			message.CreatedAt = ((string)root.created_at).ToDateTime();
+			return message;
+		}
+
 		public long Id { get; private set; }
 		public string Text { get; private set; }
 		public User Sender { get; private set; }
