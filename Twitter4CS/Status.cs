@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Twitter4CS.Util;
 
 namespace Twitter4CS
@@ -13,50 +10,40 @@ namespace Twitter4CS
 		{
 		}
 
-		public static Status Create(XElement node)
-		{
-			if (node == null)
-				throw new ArgumentNullException();
-			var status = new Status();
-			status.Id = node.Element("id").Value.ToLong();
-			status.Text = node.Element("text").ParseString();
-			status.User = User.Create(node.Element("user"));
-			status.CreatedAt = node.Element("created_at").Value.ToDateTime();
-			status.Source = node.Element("source").ParseString();
-			status.InReplyToStatusId = node.Element("in_reply_to_status_id").Value.ToLong();
-			status.InReplyToUserId = node.Element("in_reply_to_user_id").Value.ToLong();
-			status.InReplyToUserScreenName = node.Element("in_reply_to_screen_name").ParseString();
-			status.RetweetedOriginal = node.Element("retweeted_status") == null ? null : Status.Create(node.Element("retweeted_status"));
-			status.RetweetedCount = node.Element("retweeted_count") == null ? 0 : node.Element("retweeted_count").Value.ToLong();
-			var urls = node.Element("entities").Element("urls");
-			IEnumerable<XElement> urlElements = from el in urls.Elements("url") select el;
-			foreach (XElement el in urlElements)
-			{
-				status.UrlEntities.Add(UrlEntity.Create(el));
-			}
-			var mentions = node.Element("entities").Element("user_mentions");
-			IEnumerable<XElement> mentionElements = from el in mentions.Elements("user_mention") select el;
-			foreach (XElement el in mentionElements)
-			{
-				status.UserMentionEntities.Add(UserMentionEntity.Create(el));
-			}
-			var hashtags = node.Element("entities").Element("hashtags");
-			IEnumerable<XElement> hashtagElements = from el in hashtags.Elements("hashtag") select el;
-			foreach (XElement el in hashtagElements)
-			{
-				status.hashtagEntities.Add(HashtagEntity.Create(el));
-			}
-			return status;
-		}
-
-		//実装サンプル
-		public static Status Create(dynamic root)
+		public static Status Create(dynamic root, User user = null)
 		{
 			if (root == null)
 				throw new ArgumentNullException();
 			var status = new Status();
-			status.Id = (long)root.id;
-			status.Text = root.text;
+			status.Id = (long)root["id"];
+			status.Text = root["text"];
+			status.User = user != null ? user : User.Create(root["user"]);
+			status.CreatedAt = ((string)root["created_at"]).ToDateTime();
+			status.Source = ((string)root["source"]).ParseString();
+			status.InReplyToStatusId = root["in_reply_to_status_id"] == null ? 0 : (long)root["in_reply_to_status_id"];
+			status.InReplyToUserId = root["in_reply_to_user_id"] == null ? 0 : (long)root["in_reply_to_user_id"];
+			status.InReplyToUserScreenName = root["in_reply_to_screen_name"];
+			status.RetweetedOriginal = root.IsDefined("retweeted_status") ? Status.Create(root["retweeted_status"]) : null;
+			status.RetweetedCount = (long)root["retweet_count"];
+			var entities = root["entities"];
+			var urls = entities["urls"];
+			status.UrlEntities = new List<UrlEntity>();
+			foreach (var el in (dynamic[])urls)
+			{
+				status.UrlEntities.Add(UrlEntity.Create(el));
+			}
+			var mentions = entities["user_mentions"];
+			status.UserMentionEntities = new List<UserMentionEntity>();
+			foreach (var el in (dynamic[])mentions)
+			{
+				status.UserMentionEntities.Add(UserMentionEntity.Create(el));
+			}
+			var hashtags = entities["hashtags"];
+			status.HashtagEntities = new List<HashtagEntity>();
+			foreach (var el in (dynamic[])hashtags)
+			{
+				status.HashtagEntities.Add(HashtagEntity.Create(el));
+			}
 			return status;
 		}
 
@@ -66,7 +53,7 @@ namespace Twitter4CS
 		public DateTime CreatedAt { get; private set; }
 		public ICollection<UrlEntity> UrlEntities { get; private set; }
 		public ICollection<UserMentionEntity> UserMentionEntities { get; private set; }
-		public ICollection<HashtagEntity> hashtagEntities { get; private set; }
+		public ICollection<HashtagEntity> HashtagEntities { get; private set; }
 		public string Source { get; private set; }
 		public long InReplyToStatusId { get; private set; }
 		public long InReplyToUserId { get; private set; }
@@ -76,20 +63,16 @@ namespace Twitter4CS
 
 		public override bool Equals(object obj)
 		{
-			if (obj is Status)
-				return Id == ((Status)obj).Id;
+			var status = obj as Status;
+			if (status != null)
+				return Id == status.Id;
 			else 
 				return false;
 		}
 
 		public override string ToString()
 		{
-			var status = this;
-			if (RetweetedOriginal.Id > 0)
-			{
-				status = RetweetedOriginal;
-			}
-			return status.User.ScreenName + ":" + status.Text;
+			return string.Format("{0}:{1} [http://twitter.com/{0}/status/{2}]",User.ScreenName, Text, Id);
 		}
 
 		public override int GetHashCode()

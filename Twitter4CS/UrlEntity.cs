@@ -1,9 +1,4 @@
 ﻿﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
@@ -13,16 +8,16 @@ namespace Twitter4CS
 		{
 		}
 
-		public static UrlEntity Create(XElement node)
+		public static UrlEntity Create(dynamic root)
 		{
-			if (node == null)
+			if (root == null)
 				throw new ArgumentNullException();
 			var entity = new UrlEntity();
-			entity.Url = node.Element("expanded_url").Value;
-			entity.ShortenUrl = node.Element("url").Value;
-			entity.DisplayUrl = node.Element("display_url").Value;
-			entity.StartIndex = node.Attribute("start").Value.ToInteger();
-			entity.EndIndex = node.Attribute("end").Value.ToInteger();
+			entity.Url = root["expanded_url"];
+			entity.ShortenUrl = root["url"];
+			entity.DisplayUrl = root["display_url"];
+			entity.StartIndex = ((int[])root["indices"])[0];
+			entity.EndIndex = ((int[])root["indices"])[1];
 			return entity;
 		}
 

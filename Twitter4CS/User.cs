@@ -1,8 +1,4 @@
 ﻿﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Twitter4CS.Util;
 
 namespace Twitter4CS
@@ -13,35 +9,25 @@ namespace Twitter4CS
 		{
 		}
 
-		public static User Create(XElement node)
-		{
-			if (node == null)
-				throw new ArgumentNullException();
-			var user = new User();
-			user.Id = node.Element("id").Value.ToLong();
-			user.UserName = node.Element("name").ParseString();
-			user.ScreenName = node.Element("screen_name").Value;
-			user.Bio = node.Element("description").ParseString();
-			user.Followers = node.Element("followers_count").Value.ToLong();
-			user.Followings = node.Element("friends_count").Value.ToLong();
-			user.Favorites = node.Element("favourites_count").Value.ToLong();
-			user.Listed = node.Element("listed_count").Value.ToLong();
-			user.Tweets = node.Element("statuses_count").Value.ToLong();
-			user.ProfileImage = node.Element("profile_image_url").Value;
-			user.IsProtected = node.Element("protected").Value.ToBool();
-			user.CreatedAt = node.Element("created_at").Value.ToDateTime();
-			user.Location = node.Element("location").Value;
-			return user;
-		}
-
 		public static User Create(dynamic root)
 		{
 			if (root == null)
 				throw new ArgumentNullException();
 			var user = new User();
-			user.Id = (long)root.id;
-			user.UserName = root.name;
-			user.ScreenName = root.screen_name;
+			user.Id = (long)root["id"];
+			user.UserName = ((string)root["name"]).ParseString();
+			user.ScreenName = root["screen_name"];
+			user.Bio = ((string)root["description"]).ParseString();
+			user.Followers = (long)root["followers_count"];
+			user.Followings = (long)root["friends_count"];
+			user.Favorites = (long)root["favourites_count"];
+			user.Listed = (long)root["listed_count"];
+			user.Tweets = (long)root["statuses_count"];
+			user.ProfileImage = root["profile_image_url"];
+			user.IsProtected = (bool)root["protected"];
+			user.CreatedAt = ((string)root["created_at"]).ToDateTime();
+			user.Location = root["location"];
+			user.LatestStatus = root.IsDefined("status") ? Status.Create(root["status"], user) : null;
 			return user;
 		}
 
@@ -58,6 +44,7 @@ namespace Twitter4CS
 		public bool IsProtected { get; private set; }
 		public DateTime CreatedAt { get; private set; }
 		public string Location { get; private set; }
+		public Status LatestStatus { get; private set; }
 
 		public override bool Equals(object obj)
 		{

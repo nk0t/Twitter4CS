@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
-using System.IO;
-using System.Net;
 using Twitter4CS.Net;
-using System.Xml.Linq;
 
 namespace Twitter4CS.Authentication
 {
@@ -81,7 +77,7 @@ namespace Twitter4CS.Authentication
 			GET, POST
 		}
 
-		public XDocument RequestAPI(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
+		public dynamic RequestAPI(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
 		{
 			if (method == RequestMethod.GET)
 			{
@@ -91,43 +87,10 @@ namespace Twitter4CS.Authentication
 			{
 				return RequestPost(uri, parameter);
 			}
-			return new XDocument();
-		}
-
-		public dynamic RequestAPIJson(string uri, RequestMethod method, IEnumerable<KeyValuePair<string, string>> parameter)
-		{
-			if (method == RequestMethod.GET)
-			{
-				return RequestGetJson(uri, parameter);
-			}
-			else if (method == RequestMethod.POST)
-			{
-				return RequestPostJson(uri, parameter);
-			}
 			return new Util.DynamicJson();
 		}
 
-		public XDocument RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
-		{
-			var parameters2 = GenerateOAuthParameters(this.Token);
-			foreach (var p in parameters)
-				parameters2.Add(p.Key, p.Value);
-			string signature = GenerateSignature(this.Secret, "GET", url, parameters2);
-			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
-			return Http.HttpGetXml(url, parameters2);
-		}
-
-		public XDocument RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
-		{
-			var parameters2 = GenerateOAuthParameters(this.Token);
-			foreach (var p in parameters)
-				parameters2.Add(p.Key, p.Value);
-			string signature = GenerateSignature(this.Secret, "POST", url, parameters2);
-			parameters2.Add("oauth_signature", Http.UrlEncode(signature));
-			return Http.HttpPostXml(url, parameters2);
-		}
-
-		public dynamic RequestGetJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public dynamic RequestGet(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)
@@ -137,7 +100,7 @@ namespace Twitter4CS.Authentication
 			return Http.HttpGetJson(url, parameters2);
 		}
 
-		public dynamic RequestPostJson(string url, IEnumerable<KeyValuePair<string, string>> parameters)
+		public dynamic RequestPost(string url, IEnumerable<KeyValuePair<string, string>> parameters)
 		{
 			var parameters2 = GenerateOAuthParameters(this.Token);
 			foreach (var p in parameters)

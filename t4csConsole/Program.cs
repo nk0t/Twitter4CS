@@ -56,9 +56,9 @@ namespace t4csConsole
 				var s = Console.ReadLine();
 				if (s == "")
 					break;
-				var obj = TwitterApi.SendDirectMessageNew(account,s.Split(' ')[0], s.Split(' ')[1]);
+				var obj = TwitterApi.GetRelationship(account,s.Split()[0], s.Split()[1]);
 				//account.UpdateStatus(s); こっちでもいいです
-				Console.WriteLine(string.Format("{0} {1}",obj.Text, obj.CreatedAt));
+				Console.WriteLine(string.Format("{0} {1} {2}",obj.SourceScreenName, obj.TargetScreenName, obj.IsSourceBlockingTarget));
 			}
 		}
 	}
