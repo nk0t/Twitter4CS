@@ -56,9 +56,10 @@ namespace t4csConsole
 				var s = Console.ReadLine();
 				if (s == "")
 					break;
-				var obj = TwitterApi.GetRelationship(account,s.Split()[0], s.Split()[1]);
+				var obj = TwitterApi.GetHomeTimeline(account);
 				//account.UpdateStatus(s); こっちでもいいです
-				Console.WriteLine(string.Format("{0} {1} {2}",obj.SourceScreenName, obj.TargetScreenName, obj.IsSourceBlockingTarget));
+				foreach(var v in obj)
+					Console.WriteLine(string.Format("{0}", v));
 			}
 		}
 	}

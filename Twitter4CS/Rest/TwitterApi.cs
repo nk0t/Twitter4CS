@@ -57,6 +57,80 @@ namespace Twitter4CS.Rest
 
 		#endregion
 
+		#region Timeline
+
+		/// <summary>
+		/// Mentionsを取得します。
+		/// </summary>
+		public static Status[] GetMentionsTimeline(this OAuth oauth, int count = 200, int sinceId = -1, int maxId = -1)
+		{
+			var param = new List<KeyValuePair<string, string>>();
+			param.Add(new KeyValuePair<string, string>("count", count.ToString()));
+			if (sinceId > 0)
+				param.Add(new KeyValuePair<string, string>("since_id", sinceId.ToString()));
+			if(maxId > 0)
+				param.Add(new KeyValuePair<string,string>("max_id", maxId.ToString()));
+			param.Add(new KeyValuePair<string, string>("include_entities", "true"));
+			var url = TwitterApiUrl + "statuses/mentions_timeline.json";
+			var json = oauth.RequestAPI(url, OAuth.RequestMethod.GET, param);
+			var list = new List<Status>();
+			foreach (var el in (dynamic[])json)
+			{
+				list.Add(Status.Create(el));
+			}
+			return list.ToArray();
+		}
+
+		/// <summary>
+		/// 指定したScreenNameのユーザーの発言を取得します。\n
+		/// 指定しなければ自分の発言を取得します。
+		/// </summary>
+		public static Status[] GetUserTimeline(this OAuth oauth, string screenName = null, int count = 200, int sinceId = -1, int maxId = -1, bool includeRts = false)
+		{
+			var param = new List<KeyValuePair<string, string>>();
+			if(screenName != null)
+				param.Add(new KeyValuePair<string, string>("screen_name", screenName));
+			param.Add(new KeyValuePair<string, string>("count", count.ToString()));
+			if (sinceId > 0)
+				param.Add(new KeyValuePair<string, string>("since_id", sinceId.ToString()));
+			if (maxId > 0)
+				param.Add(new KeyValuePair<string, string>("max_id", maxId.ToString()));
+			if (includeRts)
+				param.Add(new KeyValuePair<string, string>("include_rts", includeRts.ToString()));
+			var url = TwitterApiUrl + "statuses/user_timeline.json";
+			var json = oauth.RequestAPI(url, OAuth.RequestMethod.GET, param);
+			var list = new List<Status>();
+			foreach (var el in (dynamic[])json)
+			{
+				list.Add(Status.Create(el));
+			}
+			return list.ToArray();
+		}
+
+		/// <summary>
+		/// 自分のタイムラインを取得します。
+		/// </summary>
+		public static Status[] GetHomeTimeline(this OAuth oauth, int count = 200, int sinceId = -1, int maxId = -1)
+		{
+			var param = new List<KeyValuePair<string, string>>();
+			param.Add(new KeyValuePair<string, string>("count", count.ToString()));
+			if (sinceId > 0)
+				param.Add(new KeyValuePair<string, string>("since_id", sinceId.ToString()));
+			if (maxId > 0)
+				param.Add(new KeyValuePair<string, string>("max_id", maxId.ToString()));
+			param.Add(new KeyValuePair<string, string>("include_entities", "true"));
+			var url = TwitterApiUrl + "statuses/home_timeline.json";
+			var json = oauth.RequestAPI(url, OAuth.RequestMethod.GET, param);
+			var list = new List<Status>();
+			foreach (var el in (dynamic[])json)
+			{
+				list.Add(Status.Create(el));
+			}
+			return list.ToArray();
+		}
+
+		#endregion
+
 		#region Favorite
 
 		/// <summary>
