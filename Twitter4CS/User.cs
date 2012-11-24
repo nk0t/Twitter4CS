@@ -3,6 +3,9 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// ユーザーオブジェクトを表します
+	/// </summary>
 	public class User
 	{
 		private User()

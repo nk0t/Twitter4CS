@@ -50,16 +50,13 @@ namespace t4csConsole
 					return;
 				}
 			}
-
+			Console.WriteLine(account.GetOwnUser());
 			while (true)
 			{
 				var s = Console.ReadLine();
 				if (s == "")
 					break;
-				var obj = TwitterApi.GetHomeTimeline(account);
-				//account.UpdateStatus(s); こっちでもいいです
-				foreach(var v in obj)
-					Console.WriteLine(string.Format("{0}", v));
+				account.UpdateStatus(s);
 			}
 		}
 	}

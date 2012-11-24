@@ -2,6 +2,9 @@
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// 二人のユーザー間の詳細な関係情報を提供します
+	/// </summary>
 	public class Relationship
 	{
 		private Relationship()

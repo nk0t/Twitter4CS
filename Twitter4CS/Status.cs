@@ -4,6 +4,9 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// ステータスオブジェクトを表します
+	/// </summary>
 	public class Status
 	{
 		private Status()

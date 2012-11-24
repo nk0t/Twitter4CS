@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// ユーザーIDの配列を格納するオブジェクトを表します
+	/// </summary>
 	public class IDs
 	{
 		private IDs()

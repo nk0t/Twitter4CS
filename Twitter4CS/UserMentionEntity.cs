@@ -4,6 +4,9 @@ namespace Twitter4CS
 {
 	public class UserMentionEntity : Entity
 	{
+		/// <summary>
+		/// ユーザーメンション要素を表します
+		/// </summary>
 		private UserMentionEntity()
 		{
 		}

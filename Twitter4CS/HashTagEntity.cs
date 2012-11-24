@@ -2,6 +2,9 @@
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// ハッシュタグ要素を表します
+	/// </summary>
 	public class HashtagEntity : Entity
 	{
 		private HashtagEntity()

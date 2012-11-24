@@ -4,6 +4,9 @@ namespace Twitter4CS
 {
 	public class UrlEntity : Entity
 	{
+		/// <summary>
+		/// URL要素を表します
+		/// </summary>
 		private UrlEntity()
 		{
 		}

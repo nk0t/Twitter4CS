@@ -3,6 +3,9 @@ using Twitter4CS.Util;
 
 namespace Twitter4CS
 {
+	/// <summary>
+	/// ダイレクトメッセージオブジェクトを表します
+	/// </summary>
 	public class DirectMessage
 	{
 		private DirectMessage()
