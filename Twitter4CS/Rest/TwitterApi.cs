@@ -190,7 +190,7 @@ namespace Twitter4CS.Rest
 		public static User GetOwnUser(this OAuth oauth)
 		{
 			var param = new List<KeyValuePair<string, string>>();
-			param.Add(new KeyValuePair<string, string>("include_entities", "true"));
+			param.Add(new KeyValuePair<string, string>("include_entities", "false"));
 			var url = TwitterApiUrl + "account/verify_credentials.json";
 			var json = oauth.RequestAPI(url, OAuth.RequestMethod.GET, param);
 			return User.Create(json);

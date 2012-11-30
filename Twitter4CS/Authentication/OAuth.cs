@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
 using Twitter4CS.Net;
+using Twitter4CS.Rest;
 
 namespace Twitter4CS.Authentication
 {
@@ -14,6 +15,14 @@ namespace Twitter4CS.Authentication
 		{
 			this.Token = token;
 			this.Secret = secret;
+			this.UserId = 0;
+			this.ScreenName = string.Empty;
+			if (token != null && secret != null)
+			{
+				var user = this.GetOwnUser();
+				this.UserId = user.Id;
+				this.ScreenName = user.ScreenName;
+			}
 		}
 
 		#region access token
@@ -35,10 +44,11 @@ namespace Twitter4CS.Authentication
 			return new Uri(url);
 		}
 
-		public bool GetAccessToken(string token, string pin, out long userId, out string userScreenName)
+		public bool GetAccessToken(string token, string pin)
 		{
 			try
 			{
+				long userId = 0;
 				var parameters = GenerateOAuthParameters(token);
 				parameters.Add("oauth_verifier", pin);
 				string signature = GenerateSignature(this.Secret, "GET", AccessTokenUrl, parameters);
@@ -50,20 +60,21 @@ namespace Twitter4CS.Authentication
 				{
 					this.Token = dic["oauth_token"];
 					this.Secret = dic["oauth_token_secret"];
-					userScreenName = dic["screen_name"];
+					this.ScreenName = dic["screen_name"];
+					this.UserId = userId;
 					return true;
 				}
 				else
 				{
-					userId = 0;
-					userScreenName = string.Empty;
+					this.UserId = 0;
+					this.ScreenName = string.Empty;
 					return false;
 				}
 			}
 			catch
 			{
-				userId = 0;
-				userScreenName = string.Empty;
+				this.UserId = 0;
+				this.ScreenName = string.Empty;
 				return false;
 			}
 		}
@@ -173,6 +184,8 @@ namespace Twitter4CS.Authentication
 
 		#endregion
 
+		public long? UserId { get; private set; }
+		public string ScreenName { get; private set; }
 		public string Token { get; set; }
 		public string Secret { get; set; }
 

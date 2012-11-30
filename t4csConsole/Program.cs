@@ -34,9 +34,7 @@ namespace t4csConsole
 				Process.Start(url.ToString());
 
 				string pin = Console.ReadLine();
-				long userId = 0;
-				string screenName = string.Empty;
-				if (account.GetAccessToken(token, pin, out userId, out screenName))
+				if (account.GetAccessToken(token, pin))
 				{
 					Console.WriteLine("認証成功");
 					if (!File.Exists("token.txt"))
@@ -50,7 +48,7 @@ namespace t4csConsole
 					return;
 				}
 			}
-			Console.WriteLine(account.GetOwnUser());
+			Console.WriteLine(account.ScreenName);
 			while (true)
 			{
 				var s = Console.ReadLine();
