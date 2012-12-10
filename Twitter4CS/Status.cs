@@ -28,24 +28,27 @@ namespace Twitter4CS
 			status.InReplyToUserScreenName = root["in_reply_to_screen_name"];
 			status.RetweetedOriginal = root.IsDefined("retweeted_status") ? Status.Create(root["retweeted_status"]) : null;
 			status.RetweetedCount = (long)root["retweet_count"];
-			var entities = root["entities"];
-			var urls = entities["urls"];
-			status.UrlEntities = new List<UrlEntity>();
-			foreach (var el in (dynamic[])urls)
+			if (root.IsDefined("entities"))
 			{
-				status.UrlEntities.Add(UrlEntity.Create(el));
-			}
-			var mentions = entities["user_mentions"];
-			status.UserMentionEntities = new List<UserMentionEntity>();
-			foreach (var el in (dynamic[])mentions)
-			{
-				status.UserMentionEntities.Add(UserMentionEntity.Create(el));
-			}
-			var hashtags = entities["hashtags"];
-			status.HashtagEntities = new List<HashtagEntity>();
-			foreach (var el in (dynamic[])hashtags)
-			{
-				status.HashtagEntities.Add(HashtagEntity.Create(el));
+				var entities = root["entities"];
+				var urls = entities["urls"];
+				status.UrlEntities = new List<UrlEntity>();
+				foreach (var el in (dynamic[])urls)
+				{
+					status.UrlEntities.Add(UrlEntity.Create(el));
+				}
+				var mentions = entities["user_mentions"];
+				status.UserMentionEntities = new List<UserMentionEntity>();
+				foreach (var el in (dynamic[])mentions)
+				{
+					status.UserMentionEntities.Add(UserMentionEntity.Create(el));
+				}
+				var hashtags = entities["hashtags"];
+				status.HashtagEntities = new List<HashtagEntity>();
+				foreach (var el in (dynamic[])hashtags)
+				{
+					status.HashtagEntities.Add(HashtagEntity.Create(el));
+				}
 			}
 			return status;
 		}

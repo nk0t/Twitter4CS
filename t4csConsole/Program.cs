@@ -15,6 +15,19 @@ namespace t4csConsole
 	{
 		static void Main(string[] args)
 		{
+			OAuth account = Login();
+			Console.WriteLine(account.ScreenName);
+			while (true)
+			{
+				var s = Console.ReadLine();
+				if (s == "")
+					break;
+				account.UpdateStatus(s);
+			}
+		}
+
+		public static OAuth Login()
+		{
 			OAuth account;
 
 			string token = "";
@@ -45,17 +58,10 @@ namespace t4csConsole
 				else
 				{
 					Console.WriteLine("認証失敗");
-					return;
+					return null;
 				}
 			}
-			Console.WriteLine(account.ScreenName);
-			while (true)
-			{
-				var s = Console.ReadLine();
-				if (s == "")
-					break;
-				account.UpdateStatus(s);
-			}
+			return account;
 		}
 	}
 }

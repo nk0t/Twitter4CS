@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twitter4CS", "Twitter4CS\Twitter4CS.csproj", "{A4828C14-B9D9-4F54-A6AE-551D42C518F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "t4csConsole", "t4csConsole\t4csConsole.csproj", "{51BF94F5-5561-49AF-8A32-60FEF3A91BF4}"
